@@ -2,10 +2,10 @@
 set shell := ["bash", "-ceu"]
 
 generate_proto:
-    protoc --proto_path=./proto \
+    protoc --proto_path=../proto \
            --go_out=./common/pb --go_opt=paths=source_relative \
            --go-grpc_out=./common/pb --go-grpc_opt=paths=source_relative \
-           proto/*.proto
+           ../proto/*.proto
 
 # Initialize the monorepo workspace
 init:
