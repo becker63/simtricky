@@ -1,0 +1,34 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "github.com/becker63/simtricky/common/pb";
+import "filesystem.proto";
+
+service tricky {
+  // Machine api
+  rpc Start(StartStop_req) returns (Sucess);
+  rpc Stop(StartStop_req) returns (Sucess);
+  rpc ChangeConfig(Config_req) returns (Sucess);
+  rpc Create_Server(Config_req) returns (Sucess);
+}
+
+message Sucess {
+    bool sucess = 1;
+}
+
+message StartStop_req {
+  uint32 Machine_id = 1;
+}
+
+enum Runner {
+    Binary = 0;
+    Java = 1;
+}
+
+message Config_req {
+  uint32 Machine_id = 1;
+  Runner Runner = 2;
+  string BinaryPath = 3;
+  optional string RemoteZip = 4;
+  optional Dir Files = 5;
+}

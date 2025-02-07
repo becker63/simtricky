@@ -1,0 +1,53 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "github.com/becker63/simtricky/common/pb";
+
+message Child {
+    oneof DirORContent {
+        Dir dir = 1;
+        bytes content = 2;
+    }
+}
+
+message Dir {
+    map<string, Child> children = 1;
+}
+
+/* Looks like this in js
+
+Files: {
+  children: {
+    dir1: {
+      dir: {
+        children: {
+          file1: {
+            content: new TextEncoder().encode("test"),
+          },
+          file2: {
+            content: new TextEncoder().encode("test"),
+          },
+        },
+      },
+    },
+    file3: {
+      content: new TextEncoder().encode("test"),
+    },
+    dir2: {
+      dir: {
+        children: {
+          file4: {
+            content: new TextEncoder().encode("test"),
+          },
+        },
+      },
+    },
+  },
+},
+
+And is accessed in go like this
+
+ConfigReq.Files.Children["afile"].File.Content
+
+ConfigReq.Files.Children["adir"].Dir.Children["afile"].File.Content
+*/
