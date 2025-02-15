@@ -3,7 +3,7 @@ package agent
 import (
 	"errors"
 
-	"github.com/becker63/simtricky/common/logger"
+	"github.com/becker63/simtricky/backend/common/logger"
 	"github.com/becker63/simtricky/common/pb"
 )
 

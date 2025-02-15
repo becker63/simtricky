@@ -1,4 +1,4 @@
-module github.com/becker63/simtricky
+module github.com/becker63/simtricky/backend
 
 go 1.23.6
 
