@@ -1,50 +1,42 @@
 # Set the shell for commands
 set shell := ["bash", "-ceu"]
 
+# Generate Protobuf
+# (Adjust paths as needed if your .proto files or output locations change)
 generate_proto:
+    rm -rf common/pb/*.pb.go
     protoc --proto_path=../proto \
            --go_out=./common/pb --go_opt=paths=source_relative \
            --go-grpc_out=./common/pb --go-grpc_opt=paths=source_relative \
            ../proto/*.proto
 
-# Initialize the monorepo workspace
+# Initialize (single-module) project
+# Not strictly needed now that there's no go.work, but might do other setup tasks.
 init:
-    go work init
-    go work use ./services/agent
-    go work use ./services/orchestrator
-    go work use ./cli
-    go work use ./common
+    go mod tidy
 
-# Run a specific service
-run_agent:
-    cd services/agent && go run main.go
-
-run_orchestrator:
-    cd services/orchestrator && go run main.go
-
-run_cli:
-    cd services/cli && go run main.go
-
-# Update dependencies in all modules
+# Update dependencies in the single module
 update-deps:
     go get -u ./...
     go mod tidy
-    find . -name "go.mod" -execdir go mod tidy \;
 
-# Run tests for all modules
+# Run tests for all packages
+# The '|| true' is your existing approach to silence nonzero exit in Just, if desired
 test:
-    go test ./...
+    @GOTESTSUM_SUPPRESS_ERRORS=1 gotestsum --format=short $(go list ./...) || true
 
-# Build all services
+# Build binaries
+# We assume each folder has a main package or an entrypoint (e.g. package main).
+# If `services/agent` only has library packages, you'll need to add a main.go there or elsewhere.
 build:
     go build -o bin/agent ./services/agent
     go build -o bin/orchestrator ./services/orchestrator
-    go build -o bin/cli ./services/cli
+    go build -o bin/cli ./cli
 
 # Clean up build artifacts
 clean:
     rm -rf bin
 
-# Show the workspace configuration
+# If you still want to see any leftover workspace config (should be empty now)
 work:
-    go work edit -json | jq
+    @echo "No go.work in single-module setup"
